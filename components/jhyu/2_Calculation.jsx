@@ -7,42 +7,50 @@ class CalculationApp extends React.Component {
       num1: '',
       num2: '',
       result: '',
+      isNegative: false,
     };
   }
 
   handleInputChange = (event, inputName) => {
     const inputValue = event.target.value;
-    const sanitizedValue = inputValue.replace(/[^0-9-]/g, ''); // 숫자와 마이너스 기호 외의 문자 제거
-    const parsedValue = sanitizedValue.startsWith('-') ? `-${sanitizedValue.replace(/-/g, '')}` : sanitizedValue; // 마이너스 기호가 처음에 오도록 처리
-    this.setState({ [inputName]: parsedValue });
+    const sanitizedValue = inputValue.replace(/[^0-9-]/g, '');
+    const parsedValue = sanitizedValue.startsWith('-') ? `-${sanitizedValue.replace(/-/g, '')}` : sanitizedValue;
+
+    // 음수 입력 여부 확인
+    const isNegative = parsedValue.startsWith('-');
+
+    this.setState({ [inputName]: parsedValue, isNegative });
   };
 
   handleCalculate = () => {
-    const { num1, num2 } = this.state;
+    const { num1, num2, isNegative } = this.state;
 
-    // 입력된 값이 정수인지 확인
-    const parsedNum1 = parseInt(num1, 10);
-    const parsedNum2 = parseInt(num2, 10);
-
+    // 숫자 변환 및 NaN 체크
+    const parsedNum1 = parseFloat(num1);
+    const parsedNum2 = parseFloat(num2);
     if (Number.isNaN(parsedNum1) || Number.isNaN(parsedNum2)) {
       this.setState({ result: '두 입력값 모두 정수여야 합니다.' });
       return;
     }
 
-    // 사칙연산 결과 생성 및 문자열로 변환
-    const sum = (parsedNum1 + parsedNum2).toString();
-    const difference = (parsedNum1 - parsedNum2).toString();
-    const product = (parsedNum1 * parsedNum2).toString();
-    const quotient = (parsedNum1 / parsedNum2).toString();
+    // 음수 표시 처리
+    const firstNum = isNegative ? parsedNum1 : parsedNum2;
+    const secondNum = isNegative ? parsedNum2 : parsedNum1;
+
+    // 사칙연산 결과 계산 및 문자열 변환
+    const sum = (firstNum + secondNum).toString();
+    const difference = (firstNum - secondNum).toString();
+    const product = (firstNum * secondNum).toString();
+    const quotient = (firstNum / secondNum).toString();
 
     const results = `
-      ${parsedNum1} + ${parsedNum2} = ${sum}\n
-      ${parsedNum1} - ${parsedNum2} = ${difference}\n
-      ${parsedNum1} * ${parsedNum2} = ${product}\n
-      ${parsedNum1} / ${parsedNum2} = ${quotient}
+      ${firstNum} + ${secondNum} = ${sum}\n
+      ${firstNum} - ${secondNum} = ${difference}\n
+      ${firstNum} * ${secondNum} = ${product}\n
+      ${firstNum} / ${secondNum} = ${quotient}
     `;
 
-    this.setState({ result: results });
+    this.setState({ result: results, isNegative: false });
   };
 
   render() {
