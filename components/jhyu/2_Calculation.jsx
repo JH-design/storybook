@@ -7,7 +7,6 @@ class CalculationApp extends React.Component {
       num1: '',
       num2: '',
       result: '',
-      isNegative: false,
     };
   }
 
@@ -16,14 +15,11 @@ class CalculationApp extends React.Component {
     const sanitizedValue = inputValue.replace(/[^0-9-]/g, '');
     const parsedValue = sanitizedValue.startsWith('-') ? `-${sanitizedValue.replace(/-/g, '')}` : sanitizedValue;
 
-    // 음수 입력 여부 확인
-    const isNegative = parsedValue.startsWith('-');
-
-    this.setState({ [inputName]: parsedValue, isNegative });
+    this.setState({ [inputName]: parsedValue });
   };
 
   handleCalculate = () => {
-    const { num1, num2, isNegative } = this.state;
+    const { num1, num2 } = this.state;
 
     // 숫자 변환 및 NaN 체크
     const parsedNum1 = parseFloat(num1);
@@ -33,24 +29,20 @@ class CalculationApp extends React.Component {
       return;
     }
 
-    // 음수 표시 처리
-    const firstNum = isNegative ? parsedNum1 : parsedNum2;
-    const secondNum = isNegative ? parsedNum2 : parsedNum1;
-
     // 사칙연산 결과 계산 및 문자열 변환
-    const sum = (firstNum + secondNum).toString();
-    const difference = (firstNum - secondNum).toString();
-    const product = (firstNum * secondNum).toString();
-    const quotient = (firstNum / secondNum).toString();
+    const sum = (parsedNum1 + parsedNum2).toString();
+    const difference = (parsedNum1 - parsedNum2).toString();
+    const product = (parsedNum1 * parsedNum2).toString();
+    const quotient = (parsedNum1 / parsedNum2).toString();
 
     const results = `
-      ${firstNum} + ${secondNum} = ${sum}\n
-      ${firstNum} - ${secondNum} = ${difference}\n
-      ${firstNum} * ${secondNum} = ${product}\n
-      ${firstNum} / ${secondNum} = ${quotient}
+      ${num1} + ${num2} = ${sum}\n
+      ${num1} - ${num2} = ${difference}\n
+      ${num1} * ${num2} = ${product}\n
+      ${num1} / ${num2} = ${quotient}
     `;
 
-    this.setState({ result: results, isNegative: false });
+    this.setState({ result: results });
   };
 
   render() {
