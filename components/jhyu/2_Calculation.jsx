@@ -12,10 +12,9 @@ class CalculationApp extends React.Component {
 
   handleInputChange = (event, inputName) => {
     const inputValue = event.target.value;
-    const sanitizedValue = inputValue.replace(/[^0-9-]/g, '');
-    const parsedValue = sanitizedValue.startsWith('-') ? `-${sanitizedValue.replace(/-/g, '')}` : sanitizedValue;
-
-    this.setState({ [inputName]: parsedValue });
+    let sanitizedValue = inputValue.startsWith('-') ? '-' : '';
+    sanitizedValue += inputValue.slice(sanitizedValue.length).replace(/[^0-9]/g, '');
+    this.setState({ [inputName]: sanitizedValue });
   };
 
   handleCalculate = () => {
